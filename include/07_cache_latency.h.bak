@@ -1,0 +1,6 @@
+#ifndef 07_CACHE_LATENCY_H
+#define 07_CACHE_LATENCY_H
+
+	void cache_latency_bm(void);
+
+#endif

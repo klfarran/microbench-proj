@@ -1,0 +1,15 @@
+#ifndef FUNCTION_CALL_H
+#define FUNCTION_CALL_H
+
+#include "config.h"
+
+	void Func0(void);
+	void Func2a(VAR_TYPE a1, VAR_TYPE a2);
+	void Func4a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4);
+	void Func6a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4, VAR_TYPE a5, VAR_TYPE a6);
+	void Func8a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4, VAR_TYPE a5, VAR_TYPE a6, VAR_TYPE a7, VAR_TYPE a8);
+	void Func10a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4, VAR_TYPE a5, VAR_TYPE a6, VAR_TYPE a7, VAR_TYPE a8, VAR_TYPE a9, VAR_TYPE a10);
+	
+	void function_overhead_bm(void);
+
+#endif

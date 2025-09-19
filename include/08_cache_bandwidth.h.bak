@@ -1,0 +1,6 @@
+#ifndef 08_CACHE_BANDWIDTH_H
+#define 08_CACHE_BANDWIDTH_H
+
+	void cache_bandwidth_bm(void);
+
+#endif
