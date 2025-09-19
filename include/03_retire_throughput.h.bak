@@ -1,6 +1,0 @@
-#ifndef 03_RETIRE_THROUGHPUT_H
-#define 03_RETIRE_THROUGHPUT_H
-
-	void retire_throughput_bm(void);
-
-#endif

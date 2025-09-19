@@ -1,6 +1,0 @@
-#ifndef 10_DRAM_BANDWIDTH_H
-#define 10_DRAM_BANDWIDTH_H
-
-	void dram_bandwidth_bm(void);
-
-#endif
