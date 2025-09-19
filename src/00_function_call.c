@@ -51,7 +51,8 @@
 		
 		//initialize all function arguments 
 		//QUESTION- do these args have to be initialized? 
-		VAR_TYPE a1, a2, a3, a4, a5, a6, a7, a8, a9, a10; 		
+		VAR_TYPE a1, a2, a3, a4, a5, a6, a7, a8, a9, a10; 	
+			//void(a1);
 		
 		unsigned long long funcStart = 0, funcEnd = 0;
 		unsigned long long emptyFuncTotalET = 0, Func2aTotalET = 0, Func4aTotalET = 0, Func6aTotalET = 0, Func8aTotalET = 0, Func10aTotalET = 0;
