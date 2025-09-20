@@ -1,6 +1,20 @@
+
 // Kelly Farran and Mohan Zhao
 // Context Switch Overhead Microbenchmark
 // CS 6354 Microbenchmarking Project
+
+
+
+#include "01_context_switch.h"
+#include "config.h"
+
+
+	void context_switch_bm(void) { 
+
+	}	
+
+
+
 
 #include <stdio.h>
 #include <unistd.h>     // for getpid(), pipe(), read(), write()
@@ -165,3 +179,6 @@ int main(void) {
 
     return 0;
 }
+
+
+
