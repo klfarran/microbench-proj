@@ -32,6 +32,7 @@ int main(int argc, char** argv){
     /* Running microbenchmarks and generating results. */
 	
 	//microbenchmark to measure function call overhead
+	//to change the type of argument passed to the functions in this benchmark, change the VAR_TYPE macro in config.h
 	function_overhead_bm();
 	
 	//microbenchmarks to measure context switch overhead
