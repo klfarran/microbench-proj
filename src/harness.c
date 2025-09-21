@@ -2,7 +2,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <sched.h> //For CPU pinning
+#include <sched.h>      //For CPU pinning
 
 #include "00_function_call.h"
 #include "01_context_switch.h"
@@ -34,8 +34,12 @@ int main(int argc, char** argv){
 	//microbenchmark to measure function call overhead
 	function_overhead_bm();
 	
-	//microbenchmark to measure context switch overhead
-	context_switch_bm();
+	//microbenchmarks to measure context switch overhead
+	unsigned long long syscall_cycles = measure_syscall_overhead();
+    printf("Average system call (getpid) overhead: %llu cycles\n", syscall_cycles);
+
+    unsigned long long ctxswitch_cycles = measure_thread_switch_overhead();
+    printf("Average thread context switch overhead: %llu cycles\n", ctxswitch_cycles);
 	
 	//microbenchmark to measure instruction fetch throughput
 	fetch_throughput_bm();

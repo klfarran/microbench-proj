@@ -1,4 +1,4 @@
-CFLAGS := -O3 -march=native -Wall -Wextra -Iinclude
+CFLAGS := -march=native -Wall -Wextra -Iinclude
 LDFLAGS := -lpthread
 BIN := build
 SRCS := $(wildcard src/*.c)
