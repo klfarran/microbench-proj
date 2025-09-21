@@ -7,6 +7,7 @@
 #include <pthread.h>    // for pthreads
 #include <sched.h>      // for sched_setaffinity()
 #include <x86intrin.h>  // for __rdtsc()
+#include "config.h"     //for NUM_ITERATIONS
 
 
 #ifdef _WIN32
@@ -15,8 +16,6 @@
 #define pipe(fds) _pipe(fds, 4096, O_BINARY)
 #endif
 
-
-#define NUM_ITERATIONS 10000
 
 // ------------------ Part 1: System call overhead ------------------
 unsigned long long measure_syscall_overhead() {
