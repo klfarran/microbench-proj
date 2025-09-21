@@ -1,26 +1,13 @@
-
 // Kelly Farran and Mohan Zhao
 // Context Switch Overhead Microbenchmark
 // CS 6354 Microbenchmarking Project
-
-
-
-#include "01_context_switch.h"
-#include "config.h"
-
-
-	void context_switch_bm(void) { 
-
-	}	
-
-
-
 
 #include <stdio.h>
 #include <unistd.h>     // for getpid(), pipe(), read(), write()
 #include <pthread.h>    // for pthreads
 #include <sched.h>      // for sched_setaffinity()
 #include <x86intrin.h>  // for __rdtsc()
+#include "config.h"     //for NUM_ITERATIONS
 
 
 #ifdef _WIN32
@@ -29,8 +16,6 @@
 #define pipe(fds) _pipe(fds, 4096, O_BINARY)
 #endif
 
-
-#define NUM_ITERATIONS 10000
 
 // ------------------ Part 1: System call overhead ------------------
 unsigned long long measure_syscall_overhead() {
@@ -146,19 +131,6 @@ unsigned long long measure_thread_switch_overhead() {
         __asm__("CPUID");
         end = __rdtsc();
         total += (end - start) - 2 * base_overhead+ETbase; 
-        //for each iteration, thread A and B both have read&write 
-        //and together we only have one time measurement cost (ETbase). 
-        //In base_overhead, we count the time measurement cost in it.
-        //So that base_overhead = 1 read&write+ 1 ETbase;
-        //since we need 2 * read&write + 1 * ETbase.
-        //= 2 * (base_overhead-ETbase) + ETbase = 2 * base_overhead - ETbase
-        // substract it,
-        // total += (end - start) - (2 * base_overhead-ETbase).
-
-        //however, in this function we repeat the calculation of ETbase again,
-        //which appears first in measure_syscall_overhead()
-        // we could make it a global variable later to make the code tidy.
-
     }
 
     pthread_join(t, NULL);
@@ -168,17 +140,3 @@ unsigned long long measure_thread_switch_overhead() {
     // Each iteration has 2 switches, so divide by 2
 
 }
-
-// ------------------ Main ------------------
-int main(void) {
-    unsigned long long syscall_cycles = measure_syscall_overhead();
-    printf("Average system call (getpid) overhead: %llu cycles\n", syscall_cycles);
-
-    unsigned long long ctxswitch_cycles = measure_thread_switch_overhead();
-    printf("Average thread context switch overhead: %llu cycles\n", ctxswitch_cycles);
-
-    return 0;
-}
-
-
-
