@@ -1,0 +1,63 @@
+
+
+	Kelly: 
+		To help me remove CLRF from my files (I commited the files to a git repository from a Windows machine)
+		https://stackoverflow.com/questions/7156694/git-how-to-renormalize-line-endings-in-all-files-in-all-revisions
+		
+		AI prompt: "how do i add a gitattributes, can can i do it in my own branch and then merge into root later?"
+		AI response: 	1. Create the .gitattributes file
+
+						Inside your repo (on your branch):
+
+						touch .gitattributes
+
+
+						Then edit it, e.g., with nano or any text editor, and add:
+
+						# Force all text files to use LF line endings
+						* text=auto
+
+						# Optional: force certain file types
+						*.c text
+						*.h text
+						*.sh text eol=lf
+						*.md text
+
+
+						This tells Git how to treat files for line endings.
+						
+						2. Add and commit it on your branch
+						
+						git add .gitattributes
+						git commit -m "Add .gitattributes to normalize line endings"
+						
+						
+		Other sources used: https://www.gnu.org/software/make/manual/
+							https://www.cs.cmu.edu/afs/cs/academic/class/15492-f07/www/pthreads.html
+							https://linux.die.net/man/2/sched_setaffinity
+							
+			AI prompt: how do i add an untracked file to the staging area making sure it is renormalized?
+			AI response: Good question 👍
+
+				If you want to add a new untracked file and make sure it follows your .gitattributes rules (for example, normalizing line endings), you can do:
+
+				git add --renormalize <file>
+
+
+				That forces Git to check the file against .gitattributes filters (like * text=auto eol=lf) and normalize it before staging.
+
+				Alternatively, if you want to be extra sure:
+
+				Make sure .gitattributes has the rule (e.g., * text=auto eol=lf).
+
+				Run:
+
+				git add --renormalize .
+
+
+				This tells Git to re-scan and re-apply normalization to all files being staged (including untracked ones).
+
+				👉 For a single new file, git add --renormalize filename is enough.
+
+				Would you like me to also show you how to check that Git actually staged the file with LF endings instead of CRLF?
+		

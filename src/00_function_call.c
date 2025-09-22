@@ -8,7 +8,7 @@
 
 #include "config.h" //includes macros for NUM_ITERATIONS and VAR_TYPE
 
-	//zero argument function
+	//one argument function
 	void Func1a(VAR_TYPE a1) {
 	
 	}
@@ -33,7 +33,7 @@
 		
 	}
 	
-	//ten arguments
+	//fifteen arguments
 	void Func15a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4, VAR_TYPE a5, VAR_TYPE a6, VAR_TYPE a7, VAR_TYPE a8, VAR_TYPE a9, VAR_TYPE a10, VAR_TYPE a11, VAR_TYPE a12, VAR_TYPE a13, VAR_TYPE a14, VAR_TYPE a15) {
 		
 	}
@@ -54,9 +54,7 @@
 		
 		
 		//initialize all function arguments 
-		//QUESTION- do these args have to be initialized? 
 		VAR_TYPE a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15; 	
-			//void(a1);
 		
 		unsigned long long funcStart = 0, funcEnd = 0;
 		unsigned long long Func1aTotalET = 0, Func2aTotalET = 0, Func4aTotalET = 0, Func6aTotalET = 0, Func8aTotalET = 0, Func15aTotalET = 0;
@@ -64,7 +62,7 @@
 		
 		for(int i = 0; i < NUM_ITERATIONS; i++) {
 
-			//measure cycles for function call with zero arguments
+			//measure cycles for function call with one argument
 			__asm__("CPUID"); //embedded x86 assembly- drain pipeline
 			funcStart = __rdtsc(); 
 			Func1a(a1);	
@@ -104,7 +102,7 @@
 			funcEnd = __rdtsc();
 			Func8aTotalET += (funcEnd - funcStart) - ETbase;
 			
-			//measure cycles for function call with ten arguments
+			//measure cycles for function call with fifteen arguments
 			__asm__("CPUID"); 
 			funcStart = __rdtsc(); 
 			Func15a(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);	
@@ -113,9 +111,9 @@
 			Func15aTotalET += (funcEnd - funcStart) - ETbase;
 		}
 		
-		printf("\nNum cycles for function with one argument: %llu\nNum cycles for function with two arguments: %llu\nNum cycles for function with four arguments: %llu", 
+		printf("\nAverage cycles for function with one argument: %llu\nAverage cycles for function with two arguments: %llu\nAverage cycles for function with four arguments: %llu", 
 			Func1aTotalET/NUM_ITERATIONS, Func2aTotalET/NUM_ITERATIONS, Func4aTotalET/NUM_ITERATIONS);
-		printf("\nNum cycles for function with six arguments: %llu\nNum cycles for function with eight arguments: %llu\nNum cycles for function with fifteen arguments: %llu\n", 
+		printf("\nAverage cycles for function with six arguments: %llu\nAverage cycles for function with eight arguments: %llu\nAverage cycles for function with fifteen arguments: %llu\n\n", 
 			Func6aTotalET/NUM_ITERATIONS, Func8aTotalET/NUM_ITERATIONS, Func15aTotalET/NUM_ITERATIONS);
 				
 		
