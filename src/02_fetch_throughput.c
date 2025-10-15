@@ -2,5 +2,5 @@
 #include "config.h"
 
 	void fetch_throughput_bm(void) { 
-
+		
 	}	

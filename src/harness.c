@@ -2,7 +2,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <sched.h>      //For CPU pinning
+#include <sched.h> //For CPU pinning
 
 #include "00_function_call.h"
 #include "01_context_switch.h"
@@ -20,7 +20,7 @@
 
 int main(int argc, char** argv){
     /* Setup code -- e.g., CPU pinning, disabling features, etc. */
-	
+		
 	//Pin CPU
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset); //clear cpuset
@@ -32,7 +32,7 @@ int main(int argc, char** argv){
     /* Running microbenchmarks and generating results. */
 	
 	//microbenchmark to measure function call overhead
-	//to change the type of argument passed to the functions in this benchmark, change the VAR_TYPE macro in config.h
+	printf("\nAverage function call overhead");
 	function_overhead_bm();
 	
 	//microbenchmarks to measure context switch overhead
