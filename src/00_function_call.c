@@ -1,7 +1,11 @@
 #include "00_function_call.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <x86intrin.h> //for access to __rdtsc(), assumes a GCC compiler and an x86 instruction set
 #include "config.h" 
+
+#define CPUID() asm volatile ("CPUID" : : : "%rax", "%rbx", "%rcx", "%rdx", "memory");
+#define RDTSCP(cycles) __asm__ volatile ("rdtsc" : "=a" (cycles));
 
 	//zero argument function
 	void Func0() {
@@ -40,15 +44,17 @@
 
 	void function_overhead_bm(void) {			
 							
-		//measure overhead of rdtsc instruction
-		unsigned long long start = 0, end = 0, ETbase = 0;
+		//measure overhead of rdtscp instruction
+		uint64_t start = 0, end = 0, ETbase = 0;
 		unsigned int aux;
 
 		for(int i = 0; i < NUM_ITERATIONS; i++) {
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
+			CPUID();
+			//RDTSCP(start);
+			//RDTSCP(end);
 			start = __rdtscp(&aux);
 			end = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
+			CPUID();
 			ETbase += end - start;
 		}
 		
@@ -57,73 +63,73 @@
 		//initialize all function arguments 
 		VAR_TYPE a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15; 	
 		
-		unsigned long long funcStart = 0, funcEnd = 0;
-		unsigned long long Func0TotalET = 0, Func1aTotalET = 0, Func2aTotalET = 0, Func4aTotalET = 0, Func6aTotalET = 0, Func8aTotalET = 0, Func15aTotalET = 0;
+		uint64_t Func0TotalET = 0, Func1aTotalET = 0, Func2aTotalET = 0, Func4aTotalET = 0, Func6aTotalET = 0, Func8aTotalET = 0, Func15aTotalET = 0;
 				
 		for(int i = 0; i < NUM_ITERATIONS; i++) {
 			//measure cycles for function call with zero arguments
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func0();
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func0TotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func0TotalET += (end - start) - ETbase;
 				
 			// one argument
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func1a(a1);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func1aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func1aTotalET += (end - start) - ETbase;
 			
 			// two arguments
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func2a(a1, a2);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func2aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func2aTotalET += (end - start) - ETbase;
 			
 			// four arguments
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func4a(a1, a2, a3, a4);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func4aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func4aTotalET += (end - start) - ETbase;
 			
 			// six arguments 
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func6a(a1, a2, a3, a4, a5, a6);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func6aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func6aTotalET += (end - start) - ETbase;
 			
 			// eight arguments
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func8a(a1, a2, a3, a4, a5, a6, a7, a8);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func8aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func8aTotalET += (end - start) - ETbase;
 			
 			// ten arguments 
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			funcStart = __rdtscp(&aux); 
+			CPUID();
+			start = __rdtscp(&aux);
 			Func15a(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);	
-			funcEnd = __rdtscp(&aux);
-			__asm__ __volatile__("cpuid"::: "%rax", "%rbx", "%rcx", "%rdx", "memory");
-			Func15aTotalET += (funcEnd - funcStart) - ETbase;
+			end = __rdtscp(&aux);
+			CPUID();
+			Func15aTotalET += (end - start) - ETbase;
 		}
-		printf("\nFunction with no arguments: %llu cycles", Func0TotalET/NUM_ITERATIONS);
+		printf("\n===Average function call overhead===\n\n");
+
+		printf("Function with no arguments: %llu cycles", Func0TotalET/NUM_ITERATIONS);
 		printf("\nFunction with one argument: %llu cycles\nFunction with two arguments: %llu cycles\nFunction with four arguments: %llu cycles", 
 			Func1aTotalET/NUM_ITERATIONS, Func2aTotalET/NUM_ITERATIONS, Func4aTotalET/NUM_ITERATIONS);
 		printf("\nFunction with six arguments: %llu cycles\nFunction with eight arguments: %llu cycles\nFunction with fifteen arguments: %llu cycles\n\n", 
 			Func6aTotalET/NUM_ITERATIONS, Func8aTotalET/NUM_ITERATIONS, Func15aTotalET/NUM_ITERATIONS);
-				
-		
+		printf("--------------------------------------------\n\n");
 	}
 	
 	

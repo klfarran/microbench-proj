@@ -2,6 +2,7 @@
 # Code to automatically compile and run all benchmarks
 
 	#Compile benchmarks
+	make clean
 	make
 
 	#Run benchmarks from harness.c

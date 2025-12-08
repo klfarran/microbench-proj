@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+	void Func0();
 	void Func1a(VAR_TYPE a1);
 	void Func2a(VAR_TYPE a1, VAR_TYPE a2);
 	void Func4a(VAR_TYPE a1, VAR_TYPE a2, VAR_TYPE a3, VAR_TYPE a4);

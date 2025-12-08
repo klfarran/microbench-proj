@@ -3,12 +3,15 @@
 // CS 6354 Microbenchmarking Project
 
 #include <stdio.h>
+#include <stdint.h>
 #include <unistd.h>     // for getpid(), pipe(), read(), write()
 #include <pthread.h>    // for pthreads
 #include <sched.h>      // for sched_setaffinity()
-#include <x86intrin.h>  // for __rdtsc()
-#include "config.h"     //for NUM_ITERATIONS
+#include <x86intrin.h>  // for rdtscp()
+#include "config.h"     
 
+#define CPUID() asm volatile ("CPUID" : : : "%rax", "%rbx", "%rcx", "%rdx", "memory");
+#define RDTSCP(cycles) __asm__ volatile ("rdtsc" : "=a" (cycles));
 
 #ifdef _WIN32
 #include <io.h>
@@ -17,25 +20,29 @@
 #endif
 
 
-// ------------------ Part 1: System call overhead ------------------
-unsigned long long measure_syscall_overhead() {
-    unsigned long long start, end, total = 0, ETbase = 0;
 
-    // First measure rdtsc overhead
+// ------------------ Part 1: System call overhead ------------------
+	uint64_t measure_syscall_overhead() {
+    uint64_t start, end, total = 0, ETbase = 0;
+    unsigned int aux;
+
+    // First measure rdtscp overhead
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        start = __rdtsc();
-        end = __rdtsc();
+        CPUID()
+		start = __rdtscp(&aux);
+		end = __rdtscp(&aux);
+		CPUID()
         ETbase += end - start;
     }
     ETbase /= NUM_ITERATIONS;
 
     // Now measure getpid() syscall overhead
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        __asm__("CPUID"); // drain pipeline
-        start = __rdtsc();
+        CPUID()
+        start = __rdtscp(&aux);
         getpid();         // get the process ID,simple system call (user ↔ kernel)
-        __asm__("CPUID");
-        end = __rdtsc();
+        end = __rdtscp(&aux);
+		CPUID()
         total += (end - start) - ETbase;
     }
     return total / NUM_ITERATIONS;
@@ -43,7 +50,7 @@ unsigned long long measure_syscall_overhead() {
 
 // ------------------ Part 2: Thread context switch ------------------
 unsigned long long measure_syscall_pipe_overhead() {
-
+	unsigned int aux;
     
     // calculate the time for a single thread (read...write...)
     int my_pipe[2];
@@ -54,14 +61,14 @@ unsigned long long measure_syscall_pipe_overhead() {
     unsigned long long start, end, total = 0;
     write(my_pipe[1], &buf, 1); //make sure the single pipe is not empty for read
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        __asm__("CPUID");
-        start = __rdtsc();
+        CPUID()
+        start = __rdtscp(&aux);
         
         write(my_pipe[1], &buf, 1);
         read(my_pipe[0], &rbuf, 1);
         
-        __asm__("CPUID");
-        end = __rdtsc();
+        end = __rdtscp(&aux);
+		CPUID()
         total += (end - start);
     }
     read(my_pipe[0], &rbuf, 1); // read the last data the clear
@@ -93,17 +100,21 @@ unsigned long long measure_thread_switch_overhead() {
     char buf = 'x';
     char rbuf;
     unsigned long long start, end, total = 0,ETbase = 0;
+	unsigned int aux;
 
-    // First measure rdtsc overhead
+    // First measure rdtscp overhead
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        start = __rdtsc();
-        end = __rdtsc();
+        CPUID()
+		start = __rdtscp(&aux);
+		end = __rdtscp(&aux);
+		CPUID()
         ETbase += end - start;
     }
 
     ETbase /= NUM_ITERATIONS;;
         // single thread overhead (without switch)
     unsigned long long base_overhead = measure_syscall_pipe_overhead();
+
 
     // Prepare pipes
     pipe(pipefd1);
@@ -120,17 +131,30 @@ unsigned long long measure_thread_switch_overhead() {
 
     // Measure one full ping-pong = 2 context switches
     for (int i = 0; i < NUM_ITERATIONS; i++) {
-        __asm__("CPUID");
-        start = __rdtsc();
+        CPUID()
+        start = __rdtscp(&aux);
 
         // Thread A writes to B
         write(pipefd1[1], &buf, 1);
         // Thread A waits for reply
         read(pipefd2[0], &rbuf, 1);
 
-        __asm__("CPUID");
-        end = __rdtsc();
+        end = __rdtscp(&aux);
+		CPUID()
         total += (end - start) - 2 * base_overhead+ETbase; 
+        //for each iteration, thread A and B both have read&write 
+        //and together we only have one time measurement cost (ETbase). 
+        //In base_overhead, we count the time measurement cost in it.
+        //So that base_overhead = 1 read&write+ 1 ETbase;
+        //since we need 2 * read&write + 1 * ETbase.
+        //= 2 * (base_overhead-ETbase) + ETbase = 2 * base_overhead - ETbase
+        // substract it,
+        // total += (end - start) - (2 * base_overhead-ETbase).
+
+        //however, in this function we repeat the calculation of ETbase again,
+        //which appears first in measure_syscall_overhead()
+        // we could make it a global variable later to make the code tidy.
+
     }
 
     pthread_join(t, NULL);
@@ -140,3 +164,4 @@ unsigned long long measure_thread_switch_overhead() {
     // Each iteration has 2 switches, so divide by 2
 
 }
+

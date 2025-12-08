@@ -32,7 +32,6 @@ int main(int argc, char** argv){
     /* Running microbenchmarks and generating results. */
 	
 	//microbenchmark to measure function call overhead
-	printf("\nAverage function call overhead");
 	function_overhead_bm();
 	
 	//microbenchmarks to measure context switch overhead
@@ -40,7 +39,8 @@ int main(int argc, char** argv){
     printf("Average system call (getpid) overhead: %llu cycles\n", syscall_cycles);
 
     unsigned long long ctxswitch_cycles = measure_thread_switch_overhead();
-    printf("Average thread context switch overhead: %llu cycles\n", ctxswitch_cycles);
+    printf("Average thread context switch overhead: %llu cycles\n\n", ctxswitch_cycles);
+	printf("--------------------------------------------\n\n");
 	
 	//microbenchmark to measure instruction fetch throughput
 	fetch_throughput_bm();
