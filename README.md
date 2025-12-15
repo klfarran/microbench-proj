@@ -1,5 +1,5 @@
 # CPU/ Memory Performance Microbenchmark Suite
-This project contains a set of 11 microbenchmarks which assess various aspects of a CPU / memory system. The microbenchmarks included are as follows: 
+This project contains a set of 11 microbenchmarks which assess various aspects of a CPU / memory system. This suite requires a processor which employs x86 assembly. The microbenchmarks included are as follows: 
 - **Function Call Overhead**
   - Measure the cost (in cycles) of invoking a function with an empty body, evaluated as a function of the number and type of arguments
   - Note- to change the type of argument passed, change the VAR_TYPE macro found in include/config.h
